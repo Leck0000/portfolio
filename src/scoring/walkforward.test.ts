@@ -36,7 +36,7 @@ await describe('look-ahead immunity', () => {
 })
 
 await describe('holdout enforcement', () => {
-  it('evolve throws when using bars from holdout period', () => {
+  it('evolve throws when using bars from holdout period', async () => {
     const { pricePoints } = await import('../data/loader.js')
     const n = pricePoints.length
     if (n < 20) {
