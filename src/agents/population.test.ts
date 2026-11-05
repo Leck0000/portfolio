@@ -96,3 +96,33 @@ describe('updateWeights', () => {
     }
   })
 })
+
+import { gitResetHard, gitCommit } from '../agents/evolution.js'
+import { loadAgents, saveAgent } from '../agents/config.js'
+import { execSync } from 'node:child_process'
+
+await describe('mutation revert', () => {
+  it('reverts a bad mutation via git reset --hard', async () => {
+    // Save the original agent config from disk
+    const originalAgent = await loadAgents()
+    const originalConfig = JSON.stringify(originalAgent[0])
+    
+    // Apply a bad mutation (extreme drift)
+    const badAgent = { ...originalAgent[0], drift: 999 }
+    await saveAgent(badAgent)
+    
+    // Commit the bad mutation
+    gitCommit('evolve: bad drift mutation')
+    
+    // The agent config on disk should now have drift: 999
+    const afterCommit = await loadAgents()
+    expect(JSON.stringify(afterCommit[0])).toBe(JSON.stringify({ drift: 999, ...originalAgent[0] })) // drift is 999
+    
+    // Reset hard to revert
+    gitResetHard()
+    
+    // Load agents again and verify they're back to original
+    const revertedAgents = await loadAgents()
+    expect(JSON.stringify(revertedAgent[0])).toBe(originalConfig)
+  })
+})

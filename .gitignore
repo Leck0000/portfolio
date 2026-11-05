@@ -7,7 +7,6 @@ dist/
 data/
 forecast.svg
 evolution.csv
-agents/
 !.gitkeep
 *.tmp
 coverage/
