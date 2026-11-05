@@ -1,0 +1,14 @@
+node_modules/
+lib/
+dist/
+*.log
+.env
+.env.local
+data/
+forecast.svg
+evolution.csv
+agents/
+!.gitkeep
+*.tmp
+coverage/
+.vitest-cache/
