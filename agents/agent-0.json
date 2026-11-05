@@ -1,0 +1,1 @@
+{"id":"agent-0","lookbackMinutes":1440,"blockLengthMinutes":30,"drift":0,"volScale":1,"useBookImbalance":false,"weight":1,"roundsAtFloor":0}
