@@ -2,7 +2,7 @@
 project: lck-drag-path
 feature: rail-and-accessibility
 phase: plan
-status: draft
+status: approved
 updated: 2026-11-13
 ---
 # Tasks — rail-and-accessibility
@@ -12,26 +12,10 @@ One commit per task. All checks run with `python -m http.server` and the browser
 
 ---
 
-## T1 — Skip-to-main link
+## T1 — Skip-to-main link — regression check *(already in baseline)*
 
 **Requirement:** R8  
-**What:** Add a visually hidden skip link as the first focusable element in `<body>`, and add `tabindex="-1"` to `<main>` so it can receive programmatic focus.
-
-**What to add immediately after `<body>` (before `<nav>`):**
-```html
-<a class="skip-link" href="#main-content">Skip to main content</a>
-```
-
-**Change `<main>` to:**
-```html
-<main id="main-content" tabindex="-1">
-```
-
-**CSS to add in `<style>`:**
-```css
-.skip-link{position:absolute;top:-9999px;left:0;background:var(--fg);color:var(--bg);padding:.6rem 1.2rem;border-radius:0 0 8px 0;font-weight:600;z-index:100;text-decoration:none}
-.skip-link:focus-visible{top:0;outline:3px solid var(--bg);outline-offset:2px}
-```
+**Status:** Baseline already has `<a class="skip-link" href="#main-content">Skip to main content</a>` as the first child of `<body>`, `<main id="main-content" tabindex="-1">`, and the full `.skip-link` / `.skip-link:focus-visible` CSS. Regression check only — no code change expected.
 
 **Check:**
 1. Open page. Press Tab once. Skip link appears at top-left with contrasting colors.
@@ -39,27 +23,21 @@ One commit per task. All checks run with `python -m http.server` and the browser
 3. Press Tab again (without activating). Skip link hides. Next focused element is the nav name link.
 4. Inspect DOM: `<a class="skip-link">` is the first child of `<body>`.
 5. Text is exactly "Skip to main content".
+6. If all pass with no code change, skip this commit.
 
 ---
 
-## T2 — Decorative rail children: `aria-hidden`
+## T2 — Decorative rail children: `aria-hidden` — regression check *(already in baseline)*
 
 **Requirement:** R7.3  
-**What:** Add `aria-hidden="true"` to the SVG and dot elements inside `#rail` so screen readers encounter only the slider role, not the decorative children.
-
-**What to change:**
-```html
-<div id="rail" …>
-  <svg aria-hidden="true">…</svg>
-  <div id="dot" aria-hidden="true"></div>
-</div>
-```
+**Status:** Baseline already has `aria-hidden="true"` on both the `<svg>` and `<div id="dot">` inside `#rail`. Regression check only — no code change expected.
 
 **Check:**
 1. Inspect DOM: `<svg>` inside `#rail` has `aria-hidden="true"`.
 2. `<div id="dot">` has `aria-hidden="true"`.
 3. `#rail` itself still has `role="slider"` and all `aria-*` attributes intact.
 4. No visual change to the rail.
+5. If all pass with no code change, skip this commit.
 
 ---
 
