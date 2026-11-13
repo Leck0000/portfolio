@@ -1,22 +1,31 @@
-# Ignore the TypeScript project files
-src/
-lib/
-tests/
-*.test.ts
-*.test.js
-tsconfig.json
-webpack.config.js
-vitest.config.ts
-package.json
-package-lock.json
-yarn.lock
-npm-debug.log
+# Ignore Documents-level files/folders
+.AJCB-Resume-.2.docx
+.ApparelWebsite/
+.Apple-Website-Design.md
+.Codex/
+.Default.rdp
+.Dell/
+.Dentra/
+.My Data Sources/
+.SIA_Project_Documentation.docx.pdf
+.SkillMatch - SBIT-3I.pdf
+.dentra-dental/
+.dentra-website.zip
+.desktop.ini
+.lck-drag-path/
+.PowerShell/
+.sia sa figma.pdf
 
-# Keep only the portfolio files
-!index.html
-*.md
+# Ignore system folders
+/My Music/
+/My Pictures/
+/My Videos/
+
+# Keep portfolio files
+index.html
+vercel.json
+AGENTS.md
+HANDOVER.md
 .github/
-!.github/workflows/deploy.yml
-!.github/workflows/vercel.json
-*.yml
-*.yaml
+.vscode/
+docs/
