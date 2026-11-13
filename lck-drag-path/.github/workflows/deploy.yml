@@ -1,0 +1,53 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Check index.html exists
+        run: |
+          if [ ! -f index.html ]; then
+            echo "ERROR: index.html not found in repository root"
+            exit 1
+          fi
+          echo "index.html found"
+      
+      - name: Check index.html is non-empty
+        run: |
+          size=$(wc -c < index.html)
+          if [ "$size" -eq 0 ]; then
+            echo "ERROR: index.html is empty"
+            exit 1
+          fi
+          echo "index.html size: $size bytes"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.event_name == 'push'
+    environment: github-pages
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
