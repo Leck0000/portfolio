@@ -16,6 +16,7 @@ nav .nm{font-weight:700;color:var(--fg);text-decoration:none;margin-right:auto}
 nav a.l{display:none;color:var(--fg);text-decoration:none;font-size:.9rem;font-weight:500;padding:.4rem .6rem;border-radius:8px;opacity:.8}
 nav a.l:hover{opacity:1}
 @media(min-width:640px){nav a.l{display:inline-block}}
+@media(min-width:768px){.grid{grid-template-columns:1fr 1fr}}
 #cb{background:var(--chip);color:var(--fg);border:0;padding:.7rem;border-radius:999px;font:600 .85rem inherit;cursor:pointer;transition:transform .25s cubic-bezier(.2,.9,.3,1)}
 #cb i{display:block;width:1rem;height:1rem;border-radius:50%;background:var(--y)}
 #cp{position:fixed;top:calc(env(safe-area-inset-top,0px) + 3.6rem);right:max(.75rem,env(safe-area-inset-right,0px));z-index:30;width:min(18rem,calc(100vw - 1.5rem));border-radius:20px;padding:1rem;display:flex;flex-direction:column;gap:.9rem;font-size:.9rem;box-shadow:var(--sh);border:1px solid var(--line);transform-origin:top right;opacity:0;visibility:hidden;transform:scale(.94);transition:opacity .2s ease-out,transform .3s cubic-bezier(.2,.9,.3,1),visibility 0s linear .3s}
