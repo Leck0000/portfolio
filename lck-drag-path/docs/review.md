@@ -176,15 +176,26 @@ tags: [review]
 - Push to `main` branch → triggers `validate` and `deploy` jobs
 - Pull request to `main` → triggers only `validate` job (sanity check)
 
-**Deploy mechanism**: Uses `actions/deploy-pages@v4` with the official `actions/configure-pages@v4` and `actions/upload-pages-artifact@v3` actions. No secrets required beyond the automatic `GITHUB_TOKEN`.
+**Deploy mechanism**: Uses `amondnet/vercel-action@v25` to deploy to Vercel. No build step required for this static single-file site.
+
+**Required secrets in GitHub:**
+- `VERCEL_TOKEN` - Vercel API token
+- `VERCEL_ORG_ID` - Your Vercel organization ID
+- `VERCEL_PROJECT_ID` - The project ID from Vercel dashboard
 
 **Risks spotted**:
-1. **Static site deployment**: Since this is a single-file static site (index.html), the deploy action uploads the entire repo root as the GitHub Pages site. This is correct for the current structure.
+1. **Static site deployment**: Since this is a single-file static site (index.html), Vercel will serve the entire repo root as the site. This is correct for the current structure.
 
 2. **No build step**: The lack of a build step is both a feature (simplicity) and a potential risk if the project grows beyond a single file. The PR check mitigates this by verifying `index.html` exists and is non-empty.
 
-3. **GITHUB_TOKEN scope**: The deploy job uses `id-token: write` permission which may require trusted execution. Verify this works on first deploy.
+3. **Secrets management**: Vercel deployment requires setting up three secrets (`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`) in your GitHub repository settings. These are stored in the CI secret store.
 
-4. **Single file**: If additional assets are added later (images, CSS, JS), consider using a `dist/` or `docs/` folder to avoid publishing test files or development artifacts.
+4. **Single file**: If additional assets are added later (images, CSS, JS), consider using a `public/` folder to keep index.html clean or configure Vercel's output directory properly.
 
-5. **No 404 redirect setup**: GitHub Pages handles this automatically for the base URL, but custom 404 handling would need to be added if required.
+5. **Environment variable**: The deployment uses `environment: vercel` which should be configured in your Vercel project dashboard.
+
+**First-time setup:**
+1. Create project in Vercel dashboard
+2. Copy VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
+3. Add as GitHub repository secrets
+4. Merge to trigger initial deployment
