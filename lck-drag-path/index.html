@@ -193,7 +193,7 @@ function springTo(t,v){
     raf=requestAnimationFrame(f)})(last);
 }
 ['wheel','touchstart','keydown','pointerdown'].forEach(function(n){addEventListener(n,stop,{capture:true,passive:true})});
-[].forEach.call(document.querySelectorAll('a[href^="#"]'),function(a){a.addEventListener('click',function(e){var t=document.querySelector(a.getAttribute('href'));if(!t)return;e.preventDefault();springTo(t.getBoundingClientRect().top+scrollY);history.replaceState(null,'',a.getAttribute('href'))})});
+[].forEach.call(document.querySelectorAll('a[href^="#"]'),function(a){a.addEventListener('click',function(e){var t=document.querySelector(a.getAttribute('href'));if(!t)return;e.preventDefault();springTo(t.getBoundingClientRect().top+scrollY);t.focus();history.replaceState(null,'',a.getAttribute('href'))})});
 
 /* rail: 1:1 drag that keeps the grab offset, rubber-bands at the ends, flings with momentum */
 var W,H,drag=false,off=0,over=0,hist=[];
