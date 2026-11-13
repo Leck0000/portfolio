@@ -1,3 +1,25 @@
+# Ignore Documents-level files/folders
+.AJCB-Resume-.2.docx
+.ApparelWebsite/
+.Apple-Website-Design.md
+.Codex/
+.Default.rdp
+.Dell/
+.Dentra/
+.My Data Sources/
+.SIA_Project_Documentation.docx.pdf
+.SkillMatch - SBIT-3I.pdf
+.dentra-dental/
+.dentra-website.zip
+.desktop.ini
+.PowerShell/
+.sia sa figma.pdf
+
+# System folders
+/My Music/
+/My Pictures/
+/My Videos/
+
 # Ignore the TypeScript project files
 src/
 lib/
@@ -17,6 +39,5 @@ npm-debug.log
 *.md
 .github/
 !.github/workflows/deploy.yml
-!.github/workflows/vercel.json
 *.yml
 *.yaml
