@@ -133,14 +133,21 @@ var cb=document.getElementById('cb'),cp=document.getElementById('cp'),sw=documen
 var DEF={a:'#f5d90a',m:'dark'},S={a:DEF.a,m:DEF.m};
 var COLORS=[['Yellow','#f5d90a'],['Cyan','#22d3ee'],['Pink','#ff5fa2'],['Green','#4ade80'],['Orange','#ff8a3d'],['Red','#ff4d4d']];
 try{var s=JSON.parse(localStorage.getItem('lck-theme'));if(s&&/^#[0-9a-f]{6}$/i.test(s.a)&&(s.m==='light'||s.m==='dark'))S=s}catch(e){}
-function lum(h){var n=parseInt(h.slice(1),16);return(.299*(n>>16&255)+.587*(n>>8&255)+.114*(n&255))/255}
+/* WCAG 2.1 relative luminance (IEC 61966-2-1 sRGB) */
+function wcagLum(hex){var n=parseInt(hex.slice(1),16);return[n>>16&255,n>>8&255,n&255].reduce(function(s,c,i){var v=c/255;v=v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);return s+v*[0.2126,0.7152,0.0722][i]},0)}
+function contrast(h1,h2){var l1=wcagLum(h1),l2=wcagLum(h2);return(Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05)}
 function mix(h,t,p){var n=parseInt(h.slice(1),16);return'#'+[n>>16&255,n>>8&255,n&255].map(function(v){return('0'+Math.round(v*(1-p)+t*p).toString(16)).slice(-2)}).join('')}
+function adjustToContrast(hex,bg,target,toward){var out=hex,step=0;while(contrast(out,bg)<target&&step<50){out=mix(out,toward,0.07);step++}if(contrast(out,bg)<target){console.warn('[theme] Cannot reach '+target+':1 for '+hex+' on '+bg);return null}return out}
 function apply(){
-  var l=lum(S.a),a=S.a;
-  if(S.m==='dark'&&l<.4)a=mix(S.a,255,.5);
-  if(S.m==='light'&&l>.3)a=mix(S.a,0,.55);
-  R.style.setProperty('--y',S.a);R.style.setProperty('--a',a);R.style.setProperty('--ring',S.a+'33');
-  R.style.setProperty('--on',l>.55?'#000':'#fff');
+  var bgHex=S.m==='dark'?'#121212':'#f5f5f7';
+  var toward=S.m==='dark'?255:0;
+  var aVal=adjustToContrast(S.a,bgHex,4.5,toward);
+  R.style.setProperty('--y',S.a);
+  R.style.setProperty('--a',aVal!==null?aVal:'var(--fg)');
+  R.style.setProperty('--ring',S.a+'33');
+  var onPole=wcagLum(S.a)>0.55?'#000000':'#ffffff';
+  var onAlt=onPole==='#000000'?'#ffffff':'#000000';
+  R.style.setProperty('--on',contrast(onPole,S.a)>=4.5?onPole:onAlt);
   R.setAttribute('data-mode',S.m);
   mb.textContent=S.m==='dark'?'Light mode':'Dark mode';
   ci.value=S.a;
