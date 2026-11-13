@@ -1,7 +1,7 @@
 ---
 project: lck-drag-path
-phase: intake
-status: draft
+phase: build
+status: approved
 updated: 2026-11-13
 tags: [index]
 ---
@@ -11,16 +11,16 @@ Personal portfolio page for Aleck Christian Biong: websites and browser automati
 
 ## State
 Tier: full
-Current phase: intake (brief and two decision entries awaiting approval)
+Current phase: build (all gates through 4 approved; ready to start feat/ branches)
 
 | Gate | Status |
 |---|---|
-| 0 Intake | pending (brief drafted) |
-| 1 Critique | pending (council entry and stack entry drafted) |
-| 2 Spec | pending |
-| 3 Design | pending (tokens drafted in design.md, Kiro confirms) |
-| 4 Plan | pending |
-| 5 Build | pending |
+| 0 Intake | approved |
+| 1 Critique | approved |
+| 2 Spec | approved |
+| 3 Design | approved (tokens in design.md, no Archify diagram — single static file) |
+| 4 Plan | approved |
+| 5 Build | in progress |
 | 6 Review and test | pending |
 | 7 Deploy | pending |
 | 8 Retro | pending |

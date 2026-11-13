@@ -2,7 +2,7 @@
 project: lck-drag-path
 feature: portfolio-content
 phase: plan
-status: draft
+status: approved
 updated: 2026-11-13
 ---
 # Tasks — portfolio-content
@@ -27,55 +27,42 @@ One commit per task. All checks run with `python -m http.server` and the browser
 
 ---
 
-## T2 — Card image area: add screenshot slot to card HTML and CSS
+## T2 — Card image area: regression check *(already in baseline)*
 
 **Requirement:** R2 (structure only — no real assets yet)  
-**What:** Add an image area at the top of each `.card` in the Work section. When no asset is provided, show the neutral placeholder (card background + "No screenshot yet" label). Card layout, border-radius, and tokens must not change.
-
-**What to change in `index.html`:**
-- Add a `<div class="card-img">` as the first child of each `.card`, containing an `<img>` with `alt=""` and `src=""` (empty until assets arrive), plus a `<span class="card-img-placeholder">No screenshot yet</span>` shown when `src` is empty.
-- Add CSS: `.card-img` fixed height (`10rem`), `border-radius: 20px 20px 0 0`, `overflow: hidden`, `background: var(--card)`. `img` inside: `width: 100%; height: 100%; object-fit: cover; display: block`. `.card-img-placeholder`: centered, `color: var(--mut)`, `font-size: .85rem`, shown only when `img` has no `src` (use `:not([src])` or the `onerror` pattern — see note).
-
-**Note:** `<img src="">` with an empty string still fires a request in some browsers. Use `<img alt="..." data-src="">` and only set `src` when a real value exists, or simply omit the `src` attribute entirely and show the placeholder `<span>` unconditionally until real assets are supplied.
+**Status:** Baseline `index.html` already has `.card-img` markup with placeholder span and all required CSS. This is a regression check only — no code change expected.
 
 **Check:**
 1. Open in browser. Each card shows a placeholder area at the top (`No screenshot yet` on card background).
-2. At 375 px: single-column grid, no overflow. At 768 px: two-column grid (see T3).
+2. At 375 px: single-column grid, no overflow. At 768 px: two-column grid.
 3. Card border-radius, padding, background, border, and shadow unchanged from baseline.
 4. No horizontal scrollbar at any tested width.
+5. If all pass with no code change, skip this commit.
 
 ---
 
-## T3 — Card grid: two-column layout at 768 px
+## T3 — Card grid: two-column layout at 768 px — regression check *(already in baseline)*
 
 **Requirement:** R2.6, R2.7  
-**What:** Add a media query so `.grid` switches to two columns at 768 px. Currently `.grid` is `display: grid; gap: .9rem` with no column rule (so it is always single-column).
-
-**What to change:**
-```css
-@media(min-width:768px){.grid{grid-template-columns:1fr 1fr}}
-```
+**Status:** Baseline already has `@media(min-width:768px){.grid{grid-template-columns:1fr 1fr}}`. Regression check only — no code change expected.
 
 **Check:**
 1. At 375 px: single column. At 768 px: two columns. At 1024 px: two columns. No overflow at any width.
+2. If all pass with no code change, skip this commit.
 
 ---
 
-## T4 — Card links: wrap each card in an anchor
+## T4 — Card links: regression check *(already in baseline)*
 
 **Requirement:** R2.3, R2.5  
-**What:** Wrap each `.card` in `<a href="<!-- TODO: replace -->" target="_blank" rel="noopener noreferrer" class="card-link">`. Add CSS so the link does not add underline or color shift to the card.
-
-**What to change:**
-- Wrap each card div in `<a class="card-link" href="#" target="_blank" rel="noopener noreferrer">…</a>` with a `<!-- TODO: replace with real project URL -->` comment on the `href`.
-- CSS: `.card-link{display:block;text-decoration:none;color:inherit;border-radius:20px}` and `.card-link:focus-visible{outline:3px solid var(--fg);outline-offset:3px}`.
-- The existing `.card` styles stay on the inner `div`.
+**Status:** Baseline already wraps each `.card` in `<a class="card-link" href="#" target="_blank" rel="noopener noreferrer">` with `<!-- TODO: replace with real project URL -->` comments. Focus ring CSS is present. Regression check only — no code change expected.
 
 **Check:**
 1. Tab to each card link — 3px `--fg` focus ring visible.
 2. Card visually unchanged (no underline, no color change).
-3. Source contains `<!-- TODO: replace with real project URL -->` comment on each href.
-4. `target="_blank"` and `rel="noopener noreferrer"` present on each link (inspect DOM).
+3. Source contains `<!-- TODO: replace with real project URL -->` comment on each card.
+4. `target="_blank"` and `rel="noopener noreferrer"` present on each link.
+5. If all pass with no code change, skip this commit.
 
 ---
 

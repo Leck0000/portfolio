@@ -2,7 +2,7 @@
 project: lck-drag-path
 feature: rail-and-accessibility
 phase: spec
-status: draft
+status: approved
 updated: 2026-11-13
 ---
 # Requirements — rail-and-accessibility

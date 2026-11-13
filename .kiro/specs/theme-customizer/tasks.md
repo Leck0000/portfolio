@@ -2,7 +2,7 @@
 project: lck-drag-path
 feature: theme-customizer
 phase: plan
-status: draft
+status: approved
 updated: 2026-11-13
 ---
 # Tasks — theme-customizer
@@ -12,40 +12,10 @@ One commit per task. All checks run with `python -m http.server` and the browser
 
 ---
 
-## T1 — Extract WCAG luminance helpers
+## T1 — WCAG luminance helpers — regression check *(already in baseline)*
 
 **Requirement:** R3  
-**What:** Add two pure-JS helper functions inside the existing IIFE in `index.html`, before `apply()`. These replace the current ad-hoc `lum()` and `mix()` functions with ones that implement the WCAG relative-luminance formula and an iterative contrast-adjustment loop.
-
-**Functions to add (replace existing `lum` and `mix`):**
-
-```js
-// WCAG 2.1 relative luminance (IEC 61966-2-1 sRGB)
-function wcagLum(hex) {
-  var n = parseInt(hex.slice(1), 16);
-  return [n >> 16 & 255, n >> 8 & 255, n & 255].reduce(function(sum, c, i) {
-    var s = c / 255;
-    s = s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
-    return sum + s * [0.2126, 0.7152, 0.0722][i];
-  }, 0);
-}
-
-// Contrast ratio between two hex colors (always ≥ 1)
-function contrast(h1, h2) {
-  var l1 = wcagLum(h1), l2 = wcagLum(h2);
-  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-}
-
-// Blend hex toward target channel value t (0–255) by fraction p
-function mix(hex, t, p) {
-  var n = parseInt(hex.slice(1), 16);
-  return '#' + [n >> 16 & 255, n >> 8 & 255, n & 255]
-    .map(function(v) { return ('0' + Math.round(v * (1 - p) + t * p).toString(16)).slice(-2); })
-    .join('');
-}
-```
-
-Remove the old `lum` function. `mix` signature stays the same (backward-compatible).
+**Status:** Baseline already has `wcagLum`, `contrast`, `mix`, and `adjustToContrast` implemented inside the IIFE. Regression check only — no code change expected.
 
 **Check:**
 1. Open browser console. Run:
@@ -56,47 +26,14 @@ Remove the old `lum` function. `mix` signature stays the same (backward-compatib
    ```
 2. No console errors on page load.
 3. Existing theme behavior unchanged (yellow accent still applies on load).
+4. If all pass with no code change, skip this commit.
 
 ---
 
-## T2 — Iterative contrast adjustment for `--a` and `--on`
+## T2 — Iterative contrast adjustment — regression check *(already in baseline)*
 
 **Requirement:** R3.1, R3.2, R3.4  
-**What:** Replace the heuristic contrast derivation in `apply()` with an iterative loop that guarantees 4.5:1 for `--a` against `--bg`, and 4.5:1 for `--on` against `--y`.
-
-**Replace the current `--a` and `--on` block in `apply()`:**
-
-```js
-function adjustToContrast(hex, bg, target, toward) {
-  // toward: 0 = darken, 255 = lighten
-  var out = hex, step = 0, ratio;
-  while ((ratio = contrast(out, bg)) < target && step < 50) {
-    out = mix(out, toward, 0.07);
-    step++;
-  }
-  if (contrast(out, bg) < target) {
-    // edge case: fell through — use --fg and warn
-    console.warn('[theme] Cannot reach ' + target + ':1 for ' + hex + ' on ' + bg);
-    return null; // caller uses --fg fallback
-  }
-  return out;
-}
-```
-
-Inside `apply()`, replace the existing `--a` / `--on` derivation with:
-
-```js
-var bgHex = S.m === 'dark' ? '#121212' : '#f5f5f7';
-var toward = S.m === 'dark' ? 255 : 0;
-var aVal = adjustToContrast(S.a, bgHex, 4.5, toward);
-R.style.setProperty('--a', aVal !== null ? aVal : 'var(--fg)');
-
-var onToward = wcagLum(S.a) > 0.55 ? 0 : 255;
-var onVal = contrast(onToward === 0 ? '#000000' : '#ffffff', S.a) >= 4.5
-  ? (onToward === 0 ? '#000000' : '#ffffff')
-  : (onToward === 0 ? '#ffffff' : '#000000');
-R.style.setProperty('--on', onVal);
-```
+**Status:** Baseline already has `adjustToContrast` and the iterative derivation of `--a` and `--on` inside `apply()`. Regression check only — no code change expected.
 
 **Check:**
 1. Apply each of the six presets. Open DevTools → Computed styles → verify `--a` value.
@@ -104,30 +41,21 @@ R.style.setProperty('--on', onVal);
 3. For each preset in light mode, repeat against `'#f5f5f7'` — result must be ≥ 4.5.
 4. For the yellow preset (`#f5d90a`), `--on` must be `#000000` (black text on yellow).
 5. No console errors; edge-case warn only if triggered.
+6. If all pass with no code change, skip this commit.
 
 ---
 
-## T3 — `prefers-contrast: more` body-copy boost
+## T3 — `prefers-contrast: more` body-copy boost — regression check *(already in baseline)*
 
 **Requirement:** R3.3  
-**What:** When `prefers-contrast: more` is active, re-run `adjustToContrast` with a 7:1 target for the body-copy color (`--fg` / `--mut` on `--bg`). This is a CSS media query, not a JS change — use CSS custom-property overrides in a `@media` block.
-
-**What to add in the `<style>` block:**
-
-```css
-@media(prefers-contrast:more){
-  :root{--fg:#ffffff;--mut:#d0cfc9}
-  :root[data-mode=light]{--fg:#000000;--mut:#3a3a3f}
-}
-```
-
-These values are pre-verified to clear 7:1 on the respective backgrounds (`#121212` / `#f5f5f7`). The accent path (`--a`) is already handled by the JS in T2 (it only targets 4.5:1; the CSS boost covers body text independently).
+**Status:** Baseline already has the `@media(prefers-contrast:more)` block with `--fg:#ffffff;--mut:#d0cfc9` for dark and `--fg:#000000;--mut:#3a3a3f` for light. Regression check only — no code change expected.
 
 **Check:**
 1. In DevTools → Rendering → Emulate CSS media: `prefers-contrast: more`.
 2. Body text visually more contrasty than default. No horizontal overflow or layout break.
 3. Cards, nav, and buttons still readable.
 4. Disable emulation — page returns to normal.
+5. If all pass with no code change, skip this commit.
 
 ---
 
